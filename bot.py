@@ -2,8 +2,9 @@ from discord.ext import commands
 import discord
 import random
 from main import gameMechanics
-botToken = "MTIyMDIzNTE2MDkyNzM0MjcwMg.G5L2GC.6U_ZEchOmxbTVQNBVXa48JJ6V4bWKYIoujEy00"
-channelId = 1220236496057929859
+from hidden import hidden
+botToken = hidden.botToken
+channelId = hidden.channelId
 
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 balance = 2
