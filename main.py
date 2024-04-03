@@ -1,5 +1,6 @@
 import random
 
+
 class gameMechanics:
 
     def deckShuffle():
@@ -10,3 +11,28 @@ class gameMechanics:
         ##TEST CODE
         #print(deck)
         return deck
+
+    def dealNewCard(deck):
+        
+        newCard = deck.pop()
+
+        return newCard
+    
+
+    def assignCardValues(card):
+        if card[0] in ["Jack", "Queen", "King"]:
+            return 10
+        elif card[0] == "Ace":
+            return 11
+        else:
+            return int(card[0])
+        
+    def adjustBalance():
+        return
+
+
+
+        
+    
+
+
