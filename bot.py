@@ -8,17 +8,20 @@ channelId = hidden.channelId
 
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 ###START HAND
-betWithinLimits = False
-jumpToPlayerPhase = False
-jumpToDealerPhase = False
-jumpToGameResult = False
-balance = 100
+
+
+
+
 @bot.command()
 async def play(channelId):
 
     ##GETS PLAYER BET
     while True:
-        
+        betWithinLimits = False
+        jumpToPlayerPhase = False
+        jumpToDealerPhase = False
+        jumpToGameResult = False
+
         await channelId.send("Hello. Please type how much money you'd like to bet")
 
         ###Checks for users response
@@ -29,13 +32,28 @@ async def play(channelId):
                 and m.channel.id == channelId.channel.id
                 and m.author == channelId.author
             )
-                
+
+              
         msg = await bot.wait_for("message", check=check)
-        msg = int(msg.content)
-        print(msg)
+        msgAuthor = str(msg.author.id)
+        bet = int(msg.content)
+        
+        balance = gameMechanics.readFile().get(msgAuthor)
+
+        if balance != int:
+            gameMechanics.addNewBalance(msgAuthor)
+            balance = int(gameMechanics.readFile().get(msgAuthor))
+        
+        print(msgAuthor)
+        print(balance)
+        print(type(msg))
+        print(type(balance))
+        print(bet)
+
         ###CHECKS IF PLAYER HAS ENOUGH MONEY TO BET
-        if msg < balance:
-            betWithinLimits = True  
+        if bet < balance:
+            betWithinLimits = True
+            
             break
         else:
             await channelId.send("Sorry you do not have enough money to bet that much, please type !play to try again.")
@@ -65,15 +83,15 @@ async def play(channelId):
     if playerScore == 21:
         if dealerScore == 21:
             #await channelId.send("Sorry tough luck. You and the dealer both have blackjack. It's a push")
-            jumpToPlayerPhase = True
+            jumpToGameResult = True
         else:
             #await channelId.send("You have a blackjack, you win!")
-            jumpToPlayerPhase = True
+            jumpToGameResult = True
 
     #Checking for a dealer blackjack        
     elif dealerScore == 21:
         #await channelId.send("Dealer has blackjack, you lose.")
-        jumpToPlayerPhase = True
+        jumpToGameResult = True
 
     else:
         jumpToPlayerPhase = True
@@ -90,7 +108,7 @@ async def play(channelId):
             playerScore = sum(gameMechanics.assignCardValues(card) for card in playerCards)
             if playerScore > 21:
                 jumpToDealerPhase = False
-                jumpToPlayerChoices = False
+                jumpToPlayerPhase = False
                 jumpToGameResult = True
                 #await channelId.send("You busted, you lose")
                 break
@@ -102,7 +120,7 @@ async def play(channelId):
                 continue
 
         elif msg == "stand":
-            jumpToPlayerChoices = False
+            jumpToPlayerPhase = False
             jumpToDealerPhase = True
             break   
         else:
@@ -134,6 +152,7 @@ async def play(channelId):
             await channelId.send(playerCards)
             await channelId.send(playerScore)
             await channelId.send("You busted, you lose")
+            gameMechanics.calcNewBalanceLoss(msgAuthor, balance, bet)
             break   
 
         elif dealerScore > 21:
@@ -144,6 +163,7 @@ async def play(channelId):
             await channelId.send(playerCards)
             await channelId.send(playerScore)
             await channelId.send("Dealer busted, you win")
+            gameMechanics.calcNewBalanceWin(msgAuthor, balance, bet)
             break
 
         elif dealerScore > playerScore:
@@ -154,6 +174,7 @@ async def play(channelId):
             await channelId.send(playerCards)
             await channelId.send(playerScore)
             await channelId.send("Dealer has a higher score, you lose")
+            gameMechanics.calcNewBalanceLoss(msgAuthor, balance, bet)
             break
 
         elif playerScore > dealerScore:
@@ -164,6 +185,7 @@ async def play(channelId):
             await channelId.send(playerCards)
             await channelId.send(playerScore)
             await channelId.send("You have a higher score, you win")
+            gameMechanics.calcNewBalanceWin(msgAuthor, balance, bet)
             break
 
         elif playerScore == dealerScore:
@@ -181,7 +203,10 @@ async def play(channelId):
     print(playerCards)
     print(playerScore)
       
-
-
+@bot.command()
+async def balance(channelId):
+    print("Sup")
     
+
+
 bot.run(botToken)       

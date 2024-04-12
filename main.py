@@ -1,5 +1,5 @@
 import random
-
+import json
 
 class gameMechanics:
 
@@ -26,9 +26,57 @@ class gameMechanics:
             return 11
         else:
             return int(card[0])
-        
-    def adjustBalance():
-        return
+
+    def readFile():
+        with open ("balances.json", "r") as openfile:
+            jsonObject = json.load(openfile)
+            print(jsonObject)
+            #print(type(jsonObject))
+            return jsonObject
+
+    def writeFile(playerBalances):
+        with open ("balances.json", "w") as outfile:
+            jsonString = json.dump(playerBalances, outfile)
+    
+    def addNewBalance(msgAuthor):
+        balanceDict = gameMechanics.readFile()
+        print(balanceDict)
+        balanceDict[msgAuthor] = 100
+        print(balanceDict)
+        with open("balances.json", "w") as outfile:
+            jsonString = json.dump(balanceDict, outfile)
+
+    def calcNewBalanceLoss(msgAuthor, balance, bet):
+        balanceDict = gameMechanics.readFile()
+        total = balance - bet
+        #print(balanceDict
+        balanceDict[msgAuthor] = total
+        #print(balanceDict)
+        with open("balances.json", "w") as outfile:
+            jsonString = json.dump(balanceDict, outfile)
+
+    def calcNewBalanceWin(msgAuthor, balance, bet):
+        balanceDict = gameMechanics.readFile()
+        total = balance + bet
+        print(balanceDict)
+        balanceDict[msgAuthor] = total
+        print(balanceDict)
+        with open("balances.json", "w") as outfile:
+            jsonString = json.dump(balanceDict, outfile)
+
+
+#playerBalances = {
+    #1:1
+#}
+
+#msgAuthor = 123
+
+#gameMechanics.writeFile(playerBalances)
+##gameMechanics.addNewBalance(msgAuthor)
+    
+
+
+
 
 
 
