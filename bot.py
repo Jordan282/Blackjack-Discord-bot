@@ -17,6 +17,7 @@ async def play(channelId):
 
     ##GETS PLAYER BET
     while True:
+
         betWithinLimits = False
         jumpToPlayerPhase = False
         jumpToDealerPhase = False
@@ -40,18 +41,21 @@ async def play(channelId):
         
         balance = gameMechanics.readFile().get(msgAuthor)
 
-        if balance != int:
+        #print(type(balance))
+
+        #Adds new account if one doesnt exist 
+        if type(balance) != int:
             gameMechanics.addNewBalance(msgAuthor)
             balance = int(gameMechanics.readFile().get(msgAuthor))
         
-        print(msgAuthor)
-        print(balance)
-        print(type(msg))
-        print(type(balance))
-        print(bet)
+        #print(msgAuthor)
+        #print(balance)
+        #print(type(msg))
+        #print(type(balance))
+        #print(bet)
 
         ###CHECKS IF PLAYER HAS ENOUGH MONEY TO BET
-        if bet < balance:
+        if bet <= balance:
             betWithinLimits = True
             
             break
@@ -61,23 +65,46 @@ async def play(channelId):
     
     #Starting new hand
     while betWithinLimits == True:
+        playerScore = 0
+        dealerScore = 0
         deck = gameMechanics.deckShuffle()
         dealerCards = []
         playerCards = []
 
-        dealerCards.append(gameMechanics.dealNewCard(deck))
-        dealerCards.append(gameMechanics.dealNewCard(deck))
-        playerCards.append(gameMechanics.dealNewCard(deck))
-        playerCards.append(gameMechanics.dealNewCard(deck))
+        #dealerCards.append(gameMechanics.dealNewCard(deck))
+        #dealerCards.append(gameMechanics.dealNewCard(deck))
+        #playerCards.append(gameMechanics.dealNewCard(deck))
+        #playerCards.append(gameMechanics.dealNewCard(deck))
 
+        dealerCards.append(("Ace", "Spades"))
+        dealerCards.append(("Ace", "Spades"))
+        playerCards.append(("Ace", "Spades"))
+        playerCards.append(("Ace", "Spades"))
+        
         await channelId.send("Dealers face up card is below (Dealer has 2 cards... one is just not visible)")
         await channelId.send(dealerCards[0])
         await channelId.send("You have the cards below")
         await channelId.send(playerCards)
         
-        playerScore = sum(gameMechanics.assignCardValues(card) for card in playerCards)
-        dealerScore = sum(gameMechanics.assignCardValues(card) for card in dealerCards)
+        
+        for card in playerCards:
+            newPlayerScore = gameMechanics.assignCardValues(card, playerScore)
+            playerScore += newPlayerScore
+
+        for card in dealerCards:
+            newDealerScore = gameMechanics.assignCardValues(card, dealerScore)
+            dealerScore += newDealerScore
+
+        #playerAces = sum(gameMechanics.aceList(card) for card in playerCards)
+        #dealerAces = sum(gameMechanics.aceList(card) for card in dealerCards)
+        
+        #print(playerAces)
+        #print(dealerAces)
+
+        
         break
+
+
     
     #Checking for a player blackjack
     if playerScore == 21:
@@ -105,7 +132,9 @@ async def play(channelId):
         #Player hit logic
         if msg == "hit":
             playerCards.append(gameMechanics.dealNewCard(deck))
-            playerScore = sum(gameMechanics.assignCardValues(card) for card in playerCards)
+            for card in playerCards:
+                newPlayerScore = gameMechanics.assignCardValues(card, playerScore)
+                playerScore += newPlayerScore
             if playerScore > 21:
                 jumpToDealerPhase = False
                 jumpToPlayerPhase = False
@@ -128,7 +157,9 @@ async def play(channelId):
     
     #Give dealer their cards
     while jumpToDealerPhase == True:
-        dealerScore = sum(gameMechanics.assignCardValues(card) for card in dealerCards)
+        for card in dealerCards:
+            newDealerScore = gameMechanics.assignCardValues(card, dealerScore)
+            dealerScore += newDealerScore
         if dealerScore < 17:
             dealerCards.append(gameMechanics.dealNewCard(deck))
             continue
@@ -199,14 +230,19 @@ async def play(channelId):
             break
 
     
-    print("loop has been broken")
-    print(playerCards)
-    print(playerScore)
+    #print("loop has been broken")
+    #print(playerCards)
+    #print(playerScore)
       
 @bot.command()
 async def balance(channelId):
-    print("Sup")
-    
+    #print("Sup")
+    #print(channelId.author.id)
+    playerBalance = gameMechanics.checkPlayerBalance(channelId.author.id)
+    await channelId.send(playerBalance)
+
+
+
 
 
 bot.run(botToken)       
