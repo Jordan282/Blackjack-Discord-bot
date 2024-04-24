@@ -27,7 +27,8 @@ def card_image_example():
     deck = gameMechanics.deckShuffle()
 
     dealer_card = gameMechanics.dealNewCard(deck)
-    player_card = gameMechanics.dealNewCard(deck)
+    player_card1 = gameMechanics.dealNewCard(deck)
+    player_card2 = gameMechanics.dealNewCard(deck)
 
     # # Opening the primary image (used in background) 
     table = Image.open(r"./assets/table.png") 
@@ -36,13 +37,14 @@ def card_image_example():
     stack_of_cards = Image.open(r"./assets/backofcard.png").resize((130, 210))
     
     dealer_card_image = Image.open(r"./assets/" + format_card_for_image(dealer_card)).resize((130, 210))
-    player_card_image = Image.open(r"./assets/" + format_card_for_image(player_card)).resize((130, 210))
+    player_card_image1 = Image.open(r"./assets/" + format_card_for_image(player_card1)).resize((130, 210))
+    player_card_image2 = Image.open(r"./assets/" + format_card_for_image(player_card2)).resize((130, 210))
 
     # Displaying the image 
-    place_cards_on_table([player_card_image], [dealer_card_image], table, 25, 130)
+    #place_cards_on_table([player_card_image], [dealer_card_image], table, 25, 130)
 
 
-    place_cards_on_table([player_card_image, ], [dealer_card_image, face_down_cards], table, 25, 130)
+    place_cards_on_table([player_card_image1, player_card_image2 ], [dealer_card_image, face_down_cards], table, 25, 130)
 
 
     table.paste(stack_of_cards, (600,50))  

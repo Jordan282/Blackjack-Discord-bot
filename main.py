@@ -21,16 +21,17 @@ class gameMechanics:
 
     def assignCardValues(card, score):
         if card[0] in ["Jack", "Queen", "King"]:
+            
             return 10
         elif card[0] == "Ace":
-            #print(score)
-            #print(card)
+            
             if score < 11:
                 return 11
             else:
                 return 1
         
         else:
+           
             return int(card[0])
 
 
@@ -76,42 +77,64 @@ class gameMechanics:
         playerBalance = balanceDict[str(playerId)]
         return playerBalance
 
-    def aceList(card):
-        if card[0] in ["Ace"]:
-            return 1
-        else:
-            return 0
-    
-    def revalueAces(score, aces):
-        dictionary = {"aces": aces, "score": score}
-        #print(dictionary)
-        if score > 21:
-            if aces > 0:
-                dictionary["score"] = score - 10
-                dictionary["aces"] = aces - 1
-                return dictionary
-                
                 
         
 
+#Change this value to true for testing
+testing = False
+
+#Ace tester
+while testing == True:
+    deck = gameMechanics.deckShuffle()
+    dealerCards = []
+    playerCards = []
+
+    #dealerCards.append(gameMechanics.dealNewCard(deck))
+    #dealerCards.append(gameMechanics.dealNewCard(deck))
+    #playerCards.append(gameMechanics.dealNewCard(deck))
+    #playerCards.append(gameMechanics.dealNewCard(deck))
+
+    dealerCards.append(("Ace", "Spades"))
+    dealerCards.append(("Ace", "Spades"))
+    playerCards.append(("Ace", "Spades"))
+    playerCards.append(("Ace", "Spades"))
+
+    playerScore = 0
+    for card in playerCards:
+        newPlayerScore = gameMechanics.assignCardValues(card, playerScore)
+        playerScore += newPlayerScore
+
+    dealerScore = 0
+    for card in dealerCards:
+        newDealerScore = gameMechanics.assignCardValues(card, dealerScore)
+        dealerScore += newDealerScore
 
 
+    print(playerScore)
+    print(dealerScore)
 
+    input("Enter for new card")
+    playerCards.append(gameMechanics.dealNewCard(deck))
+    dealerCards.append(gameMechanics.dealNewCard(deck))
 
-            
-#playerBalances = {
-    #1:1
-#}
+    print(playerCards)
+    print(dealerCards)
+    print(playerScore)
+    print(dealerScore)
+    input()
 
-#msgAuthor = 123
+    playerScore = 0
+    for card in playerCards:
+        newPlayerScore = gameMechanics.assignCardValues(card, playerScore)
+        playerScore += newPlayerScore
 
-#gameMechanics.writeFile(playerBalances)
-##gameMechanics.addNewBalance(msgAuthor)
-    
-#gameMechanics.checkPlayerBalance("362001727714623489")
+    dealerScore = 0
+    for card in dealerCards:
+        newDealerScore = gameMechanics.assignCardValues(card, dealerScore)
+        dealerScore += newDealerScore
 
-
-        
-    
-
+    print(playerCards)
+    print(dealerCards)
+    print(playerScore)
+    print(dealerScore)
 

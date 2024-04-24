@@ -86,11 +86,12 @@ async def play(channelId):
         await channelId.send("You have the cards below")
         await channelId.send(playerCards)
         
-        
+        playerScore = 0
         for card in playerCards:
             newPlayerScore = gameMechanics.assignCardValues(card, playerScore)
             playerScore += newPlayerScore
 
+        dealerScore = 0
         for card in dealerCards:
             newDealerScore = gameMechanics.assignCardValues(card, dealerScore)
             dealerScore += newDealerScore
@@ -132,6 +133,8 @@ async def play(channelId):
         #Player hit logic
         if msg == "hit":
             playerCards.append(gameMechanics.dealNewCard(deck))
+
+            playerScore = 0
             for card in playerCards:
                 newPlayerScore = gameMechanics.assignCardValues(card, playerScore)
                 playerScore += newPlayerScore
@@ -157,6 +160,7 @@ async def play(channelId):
     
     #Give dealer their cards
     while jumpToDealerPhase == True:
+        dealerScore = 0
         for card in dealerCards:
             newDealerScore = gameMechanics.assignCardValues(card, dealerScore)
             dealerScore += newDealerScore
