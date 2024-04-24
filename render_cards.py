@@ -50,5 +50,87 @@ def card_image_example():
     table.paste(stack_of_cards, (600,50))  
 
     table.show()
+
+def game(dealer_cards, player_cards):
+
+    dealer_card = dealer_cards[0]
+    #player_card1 = player_cards[0]
+    #player_card2 = player_cards[1]
+
+    # # Opening the primary image (used in background) 
+    table = Image.open(r"./assets/table.png") 
     
-card_image_example()
+    face_down_cards = Image.open(r"./assets/backofcard.png").resize((130, 210)) 
+    stack_of_cards = Image.open(r"./assets/backofcard.png").resize((130, 210))
+    
+    player_card_images = []
+    dealer_card_images = []
+
+    dealer_card_image = Image.open(r"./assets/" + format_card_for_image(dealer_card)).resize((130, 210))
+
+    for x in player_cards:
+        player_card_images.append(Image.open(r"./assets/" + format_card_for_image(x)).resize((130, 210)))
+    
+    for x in dealer_cards:
+        dealer_card_images.append(Image.open(r"./assets/" + format_card_for_image(x)).resize((130, 210)))
+
+
+    # Displaying the image 
+    #place_cards_on_table([player_card_image], [dealer_card_image], table, 25, 130)
+
+
+    place_cards_on_table([player_card_images[x] for x in range(len(player_card_images))], [dealer_card_image, face_down_cards], table, 25, 130)
+
+
+    table.paste(stack_of_cards, (600,50))  
+
+    table.show()
+
+
+def endgame_image(dealer_cards, player_cards):
+
+    # # Opening the primary image (used in background) 
+    table = Image.open(r"./assets/table.png") 
+    
+    stack_of_cards = Image.open(r"./assets/backofcard.png").resize((130, 210))
+    
+    player_card_images = []
+    dealer_card_images = []
+
+    for x in player_cards:
+        player_card_images.append(Image.open(r"./assets/" + format_card_for_image(x)).resize((130, 210)))
+    
+    for x in dealer_cards:
+        dealer_card_images.append(Image.open(r"./assets/" + format_card_for_image(x)).resize((130, 210)))
+
+
+    # Displaying the image 
+    #place_cards_on_table([player_card_image], [dealer_card_image], table, 25, 130)
+
+
+    place_cards_on_table([player_card_images[x] for x in range(len(player_card_images))], [dealer_card_images[x] for x in range(len(dealer_card_images))], table, 25, 130)
+
+
+    table.paste(stack_of_cards, (600,50))  
+
+    table.show()
+
+
+#Change this to enable testing
+test = False
+
+#Card image testing
+while test == True:
+    deck = gameMechanics.deckShuffle()
+
+    playerCards = [] 
+    dealerCards = []
+
+    playerCards.append(gameMechanics.dealNewCard(deck))
+    playerCards.append(gameMechanics.dealNewCard(deck))
+
+
+    dealerCards.append(gameMechanics.dealNewCard(deck))
+    dealerCards.append(gameMechanics.dealNewCard(deck))
+
+    game(dealerCards, playerCards)
