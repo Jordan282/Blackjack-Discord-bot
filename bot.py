@@ -3,6 +3,8 @@ import discord
 import random
 from main import gameMechanics
 from hidden import hidden
+from render_cards import *
+
 botToken = hidden.botToken
 channelId = hidden.channelId
 
@@ -17,7 +19,7 @@ async def play(channelId):
 
     ##GETS PLAYER BET
     while True:
-
+        
         betWithinLimits = False
         jumpToPlayerPhase = False
         jumpToDealerPhase = False
@@ -71,26 +73,28 @@ async def play(channelId):
         dealerCards = []
         playerCards = []
 
-        #dealerCards.append(gameMechanics.dealNewCard(deck))
-        #dealerCards.append(gameMechanics.dealNewCard(deck))
-        #playerCards.append(gameMechanics.dealNewCard(deck))
-        #playerCards.append(gameMechanics.dealNewCard(deck))
+        dealerCards.append(gameMechanics.dealNewCard(deck))
+        dealerCards.append(gameMechanics.dealNewCard(deck))
+        playerCards.append(gameMechanics.dealNewCard(deck))
+        playerCards.append(gameMechanics.dealNewCard(deck))
 
-        dealerCards.append(("Ace", "Spades"))
-        dealerCards.append(("Ace", "Spades"))
-        playerCards.append(("Ace", "Spades"))
-        playerCards.append(("Ace", "Spades"))
-        
+        print(dealerCards)
+        print(playerCards)
+
+        game(dealerCards, playerCards)
+
+
         await channelId.send("Dealers face up card is below (Dealer has 2 cards... one is just not visible)")
         await channelId.send(dealerCards[0])
         await channelId.send("You have the cards below")
         await channelId.send(playerCards)
         
-        
+        playerScore = 0
         for card in playerCards:
             newPlayerScore = gameMechanics.assignCardValues(card, playerScore)
             playerScore += newPlayerScore
 
+        dealerScore = 0
         for card in dealerCards:
             newDealerScore = gameMechanics.assignCardValues(card, dealerScore)
             dealerScore += newDealerScore
@@ -132,6 +136,8 @@ async def play(channelId):
         #Player hit logic
         if msg == "hit":
             playerCards.append(gameMechanics.dealNewCard(deck))
+            game(dealerCards, playerCards)
+            playerScore = 0
             for card in playerCards:
                 newPlayerScore = gameMechanics.assignCardValues(card, playerScore)
                 playerScore += newPlayerScore
@@ -157,6 +163,7 @@ async def play(channelId):
     
     #Give dealer their cards
     while jumpToDealerPhase == True:
+        dealerScore = 0
         for card in dealerCards:
             newDealerScore = gameMechanics.assignCardValues(card, dealerScore)
             dealerScore += newDealerScore
@@ -175,6 +182,9 @@ async def play(channelId):
     
     #Game result
     while jumpToGameResult == True:
+
+        endgame_image(dealerCards, playerCards)
+        
         if playerScore > 21:
             await channelId.send("Dealer has the cards below")
             await channelId.send(dealerCards)
