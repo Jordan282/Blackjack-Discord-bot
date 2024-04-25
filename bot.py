@@ -11,8 +11,11 @@ channelId = hidden.channelId
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 ###START HAND
 
-
-
+async def handle_photo(bot, pathname):
+    
+    await bot.send(file=discord.File(pathname))
+    # await os.remove("")
+    
 
 @bot.command()
 async def play(channelId):
@@ -82,6 +85,7 @@ async def play(channelId):
         print(playerCards)
 
         game(dealerCards, playerCards)
+        await handle_photo(channelId, "./temp/table.png")
 
 
         await channelId.send("Dealers face up card is below (Dealer has 2 cards... one is just not visible)")
@@ -137,6 +141,8 @@ async def play(channelId):
         if msg == "hit":
             playerCards.append(gameMechanics.dealNewCard(deck))
             game(dealerCards, playerCards)
+            await handle_photo(channelId, "./temp/table.png")
+
             playerScore = 0
             for card in playerCards:
                 newPlayerScore = gameMechanics.assignCardValues(card, playerScore)
@@ -184,6 +190,8 @@ async def play(channelId):
     while jumpToGameResult == True:
 
         endgame_image(dealerCards, playerCards)
+        await handle_photo(channelId, "./temp/table.png")
+
         
         if playerScore > 21:
             await channelId.send("Dealer has the cards below")
