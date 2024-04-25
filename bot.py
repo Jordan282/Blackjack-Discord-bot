@@ -11,8 +11,11 @@ channelId = hidden.channelId
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 ###START HAND
 
-
-
+async def handle_photo(bot, pathname):
+    
+    await bot.send(file=discord.File(pathname))
+    # await os.remove("")
+    
 
 @bot.command()
 async def play(channelId):
@@ -59,7 +62,6 @@ async def play(channelId):
         ###CHECKS IF PLAYER HAS ENOUGH MONEY TO BET
         if bet <= balance:
             betWithinLimits = True
-            
             break
         else:
             await channelId.send("Sorry you do not have enough money to bet that much, please type !play to try again.")
@@ -73,21 +75,33 @@ async def play(channelId):
         dealerCards = []
         playerCards = []
 
+        
         dealerCards.append(gameMechanics.dealNewCard(deck))
         dealerCards.append(gameMechanics.dealNewCard(deck))
         playerCards.append(gameMechanics.dealNewCard(deck))
         playerCards.append(gameMechanics.dealNewCard(deck))
 
-        print(dealerCards)
-        print(playerCards)
+
+        playersFirstCard = playerCards[0]
+        dealersFirstCard = dealerCards[0]
+    
+
+        if playersFirstCard[0] == "Ace":
+            playerCards.reverse()
+
+        if dealersFirstCard[0] == "Ace":
+            dealerCards.reverse()
+    
+
 
         game(dealerCards, playerCards)
+        await handle_photo(channelId, "./temp/table.png")
 
 
-        await channelId.send("Dealers face up card is below (Dealer has 2 cards... one is just not visible)")
-        await channelId.send(dealerCards[0])
-        await channelId.send("You have the cards below")
-        await channelId.send(playerCards)
+        #await channelId.send("Dealers face up card is below (Dealer has 2 cards... one is just not visible)")
+        #await channelId.send(dealerCards[0])
+        #await channelId.send("You have the cards below")
+        #await channelId.send(playerCards)
         
         playerScore = 0
         for card in playerCards:
@@ -128,6 +142,7 @@ async def play(channelId):
         jumpToPlayerPhase = True
     
     #If no one has a blackjack we continue the hand as normal
+    #Hit or stand segment of the game
     while jumpToPlayerPhase == True:
         await channelId.send("Would you like to hit or stand?")
         msg = await bot.wait_for("message", check=check)
@@ -137,6 +152,8 @@ async def play(channelId):
         if msg == "hit":
             playerCards.append(gameMechanics.dealNewCard(deck))
             game(dealerCards, playerCards)
+            await handle_photo(channelId, "./temp/table.png")
+
             playerScore = 0
             for card in playerCards:
                 newPlayerScore = gameMechanics.assignCardValues(card, playerScore)
@@ -148,10 +165,10 @@ async def play(channelId):
                 #await channelId.send("You busted, you lose")
                 break
             else:
-                await channelId.send("Dealers face up card is below (Dealer has 2 cards... one is just not visible)")
-                await channelId.send(dealerCards[0])
-                await channelId.send("You have the cards below")
-                await channelId.send(playerCards)
+                #await channelId.send("Dealers face up card is below (Dealer has 2 cards... one is just not visible)")
+                #await channelId.send(dealerCards[0])
+                #await channelId.send("You have the cards below")
+                #await channelId.send(playerCards)
                 continue
 
         elif msg == "stand":
@@ -184,58 +201,60 @@ async def play(channelId):
     while jumpToGameResult == True:
 
         endgame_image(dealerCards, playerCards)
+        await handle_photo(channelId, "./temp/table.png")
+
         
         if playerScore > 21:
-            await channelId.send("Dealer has the cards below")
-            await channelId.send(dealerCards)
-            await channelId.send(dealerScore)
-            await channelId.send("You have the cards below")
-            await channelId.send(playerCards)
-            await channelId.send(playerScore)
+            #await channelId.send("Dealer has the cards below")
+            #await channelId.send(dealerCards)
+            #await channelId.send(dealerScore)
+            #await channelId.send("You have the cards below")
+            ##await channelId.send(playerCards)
+            #await channelId.send(playerScore)
             await channelId.send("You busted, you lose")
             gameMechanics.calcNewBalanceLoss(msgAuthor, balance, bet)
             break   
 
         elif dealerScore > 21:
-            await channelId.send("Dealer has the cards below")
-            await channelId.send(dealerCards)
-            await channelId.send(dealerScore)
-            await channelId.send("You have the cards below")
-            await channelId.send(playerCards)
-            await channelId.send(playerScore)
+            #await channelId.send("Dealer has the cards below")
+            #await channelId.send(dealerCards)
+            #await channelId.send(dealerScore)
+            #await channelId.send("You have the cards below")
+            #await channelId.send(playerCards)
+            #await channelId.send(playerScore)
             await channelId.send("Dealer busted, you win")
             gameMechanics.calcNewBalanceWin(msgAuthor, balance, bet)
             break
 
         elif dealerScore > playerScore:
-            await channelId.send("Dealer has the cards below")
-            await channelId.send(dealerCards)
-            await channelId.send(dealerScore)
-            await channelId.send("You have the cards below")
-            await channelId.send(playerCards)
-            await channelId.send(playerScore)
+            #await channelId.send("Dealer has the cards below")
+            #await channelId.send(dealerCards)
+            #await channelId.send(dealerScore)
+            #await channelId.send("You have the cards below")
+            #await channelId.send(playerCards)
+            #await channelId.send(playerScore)
             await channelId.send("Dealer has a higher score, you lose")
             gameMechanics.calcNewBalanceLoss(msgAuthor, balance, bet)
             break
 
         elif playerScore > dealerScore:
-            await channelId.send("Dealer has the cards below")
-            await channelId.send(dealerCards)
-            await channelId.send(dealerScore)
-            await channelId.send("You have the cards below")
-            await channelId.send(playerCards)
-            await channelId.send(playerScore)
+            #await channelId.send("Dealer has the cards below")
+            #await channelId.send(dealerCards)
+            #await channelId.send(dealerScore)
+            #await channelId.send("You have the cards below")
+            #await channelId.send(playerCards)
+            #await channelId.send(playerScore)
             await channelId.send("You have a higher score, you win")
             gameMechanics.calcNewBalanceWin(msgAuthor, balance, bet)
             break
 
         elif playerScore == dealerScore:
-            await channelId.send("Dealer has the cards below")
-            await channelId.send(dealerCards)
-            await channelId.send(dealerScore)
-            await channelId.send("You have the cards below")
-            await channelId.send(playerCards)
-            await channelId.send(playerScore)
+            #await channelId.send("Dealer has the cards below")
+            #await channelId.send(dealerCards)
+            #await channelId.send(dealerScore)
+            #await channelId.send("You have the cards below")
+            #await channelId.send(playerCards)
+            #await channelId.send(playerScore)
             await channelId.send("You and the dealer have the same score, it's a push")
             break
 
@@ -251,6 +270,11 @@ async def balance(channelId):
     playerBalance = gameMechanics.checkPlayerBalance(channelId.author.id)
     await channelId.send(playerBalance)
 
+@bot.command()
+async def buy(channelId):
+    playerBalance = gameMechanics.checkPlayerBalance(channelId.author.id)
+    if playerBalance == 0:
+        gameMechanics.addNewBalance(channelId.author.id)
 
 
 

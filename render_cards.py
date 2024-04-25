@@ -1,6 +1,7 @@
 
 from PIL import Image 
-from main import gameMechanics  
+from main import gameMechanics 
+import os
 
 def format_card_for_image(card) -> str:
     suit = card[1].lower()
@@ -83,8 +84,14 @@ def game(dealer_cards, player_cards):
 
 
     table.paste(stack_of_cards, (600,50))  
-
-    table.show()
+    
+    pathname = "./temp/table.png" 
+    
+    table.save(pathname)
+        
+    return pathname
+    
+    
 
 
 def endgame_image(dealer_cards, player_cards):
@@ -113,7 +120,10 @@ def endgame_image(dealer_cards, player_cards):
 
     table.paste(stack_of_cards, (600,50))  
 
-    table.show()
+    # table.show()
+    pathname = "./temp/table.png"
+    
+    table.save(pathname)
 
 
 #Change this to enable testing
