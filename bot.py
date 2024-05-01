@@ -27,6 +27,7 @@ async def play(channelId):
         jumpToPlayerPhase = False
         jumpToDealerPhase = False
         jumpToGameResult = False
+        
 
         await channelId.send("Hello. Please type how much money you'd like to bet")
 
@@ -74,6 +75,8 @@ async def play(channelId):
         deck = gameMechanics.deckShuffle()
         dealerCards = []
         playerCards = []
+        tempPlayerCards = []
+        tempDealerCards = []
 
         
         dealerCards.append(gameMechanics.dealNewCard(deck))
@@ -86,11 +89,11 @@ async def play(channelId):
         dealersFirstCard = dealerCards[0]
     
 
-        if playersFirstCard[0] == "Ace":
-            playerCards.reverse()
+        #if playersFirstCard[0] == "Ace":
+            #playerCards.reverse()
 
-        if dealersFirstCard[0] == "Ace":
-            dealerCards.reverse()
+        #if dealersFirstCard[0] == "Ace":
+            #dealerCards.reverse()
     
 
 
@@ -103,13 +106,17 @@ async def play(channelId):
         #await channelId.send("You have the cards below")
         #await channelId.send(playerCards)
         
+        tempPlayerCards = playerCards.copy()
+        gameMechanics.rearrangeCards(tempPlayerCards)
         playerScore = 0
-        for card in playerCards:
+        for card in tempPlayerCards:
             newPlayerScore = gameMechanics.assignCardValues(card, playerScore)
             playerScore += newPlayerScore
 
+        tempDealerCards = dealerCards.copy()
+        gameMechanics.rearrangeCards(tempDealerCards)
         dealerScore = 0
-        for card in dealerCards:
+        for card in tempDealerCards:
             newDealerScore = gameMechanics.assignCardValues(card, dealerScore)
             dealerScore += newDealerScore
 
@@ -154,10 +161,13 @@ async def play(channelId):
             game(dealerCards, playerCards)
             await handle_photo(channelId, "./temp/table.png")
 
+            tempPlayerCards = playerCards.copy()
+            gameMechanics.rearrangeCards(tempPlayerCards)
             playerScore = 0
-            for card in playerCards:
+            for card in tempPlayerCards:
                 newPlayerScore = gameMechanics.assignCardValues(card, playerScore)
                 playerScore += newPlayerScore
+
             if playerScore > 21:
                 jumpToDealerPhase = False
                 jumpToPlayerPhase = False
@@ -180,10 +190,13 @@ async def play(channelId):
     
     #Give dealer their cards
     while jumpToDealerPhase == True:
+        tempDealerCards = dealerCards.copy()
+        gameMechanics.rearrangeCards(tempDealerCards)
         dealerScore = 0
-        for card in dealerCards:
+        for card in tempDealerCards:
             newDealerScore = gameMechanics.assignCardValues(card, dealerScore)
             dealerScore += newDealerScore
+
         if dealerScore < 17:
             dealerCards.append(gameMechanics.dealNewCard(deck))
             continue

@@ -76,6 +76,14 @@ class gameMechanics:
         balanceDict = gameMechanics.readFile()
         playerBalance = balanceDict[str(playerId)]
         return playerBalance
+    
+    def rearrangeCards(cards):
+        for card in cards:
+            if card[0] == "Ace":
+                cards.remove(card)
+                cards.append(card)
+                #print("Sucess")
+        #print(cards)
 
                 
         
@@ -88,6 +96,8 @@ while testing == True:
     deck = gameMechanics.deckShuffle()
     dealerCards = []
     playerCards = []
+    tempPlayerCards = playerCards.copy()
+    tempDealerCards = dealerCards.copy()
 
     #dealerCards.append(gameMechanics.dealNewCard(deck))
     #dealerCards.append(gameMechanics.dealNewCard(deck))
@@ -95,32 +105,42 @@ while testing == True:
     #playerCards.append(gameMechanics.dealNewCard(deck))
 
     dealerCards.append(("Ace", "Spades"))
-    dealerCards.append(("Ace", "Spades"))
+    dealerCards.append(("5", "Spades"))
+    dealerCards.append(("2", "Spades"))
     playerCards.append(("Ace", "Spades"))
-    playerCards.append(("Ace", "Spades"))
+    dealerCards.append(("5", "Spades"))
+    playerCards.append(("2", "Spades"))
 
+    
+    tempPlayerCards = playerCards.copy()
+    gameMechanics.rearrangeCards(tempPlayerCards)
     playerScore = 0
-    for card in playerCards:
+    for card in tempPlayerCards:
         newPlayerScore = gameMechanics.assignCardValues(card, playerScore)
         playerScore += newPlayerScore
 
+    
+    tempDealerCards = dealerCards.copy()
+    gameMechanics.rearrangeCards(tempDealerCards)
     dealerScore = 0
-    for card in dealerCards:
+    for card in tempDealerCards:
         newDealerScore = gameMechanics.assignCardValues(card, dealerScore)
         dealerScore += newDealerScore
 
 
-    print(playerScore)
-    print(dealerScore)
+    #print(playerScore)
+    #print(dealerScore)
 
-    input("Enter for new card")
-    playerCards.append(gameMechanics.dealNewCard(deck))
-    dealerCards.append(gameMechanics.dealNewCard(deck))
+    #input("Enter for new card")
+    #playerCards.append(gameMechanics.dealNewCard(deck))
+    #dealerCards.append(gameMechanics.dealNewCard(deck))
 
     print(playerCards)
     print(dealerCards)
     print(playerScore)
     print(dealerScore)
+    print(tempPlayerCards)
+    print(tempDealerCards)
     input()
 
     playerScore = 0
